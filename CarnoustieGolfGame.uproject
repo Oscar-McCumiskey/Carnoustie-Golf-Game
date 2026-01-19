@@ -1,0 +1,22 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{1D6C359B-4A61-B306-52DF-F0B078C5D8F5}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "CarnoustieGolfGame",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "ModelingToolsEditorMode",
+			"Enabled": true,
+			"TargetAllowList": [
+				"Editor"
+			]
+		}
+	]
+}
