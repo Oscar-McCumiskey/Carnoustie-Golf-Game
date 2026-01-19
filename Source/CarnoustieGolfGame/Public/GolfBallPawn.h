@@ -4,10 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Logging/LogMacros.h"
 #include "GolfBallPawn.generated.h"
 
 class UInputAction;
 struct FInputActionValue;
+
+DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS()
 class CARNOUSTIEGOLFGAME_API AGolfBallPawn : public APawn

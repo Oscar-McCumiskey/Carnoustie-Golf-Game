@@ -6,6 +6,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 
+DEFINE_LOG_CATEGORY(LogTemplateCharacter);
+
 // Sets default values
 AGolfBallPawn::AGolfBallPawn()
 {
@@ -25,6 +27,9 @@ void AGolfBallPawn::Look(const FInputActionValue& Value)
 {
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
+	if(GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Look"));	
+
 	DoLook(LookAxisVector.X, LookAxisVector.Y);
 }
 
@@ -35,6 +40,9 @@ void AGolfBallPawn::DoLook(float Yaw, float Pitch)
 		AddControllerYawInput(Yaw * 1);
 		AddControllerPitchInput(Pitch * 1);
 	}
+
+	if(GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Do Look"));	
 }
 
 // Called every frame
@@ -52,6 +60,10 @@ void AGolfBallPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &AGolfBallPawn::Look);
+	}
+	else
+	{
+		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
 }
 

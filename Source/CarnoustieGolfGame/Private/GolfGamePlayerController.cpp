@@ -8,6 +8,8 @@
 
 void AGolfGamePlayerController::SetupInputComponent()
 {
+	Super::SetupInputComponent();
+	
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
 		for (UInputMappingContext* CurrentContext : DefaultMappingContexts)
