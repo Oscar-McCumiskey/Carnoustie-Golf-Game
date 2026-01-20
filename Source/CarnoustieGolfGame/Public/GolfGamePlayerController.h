@@ -20,7 +20,7 @@ class CARNOUSTIEGOLFGAME_API AGolfGamePlayerController : public APlayerControlle
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input", meta = (AllowPrivateAccess = "true"))
-	TArray<UInputMappingContext*> DefaultMappingContexts;
+	TSoftObjectPtr<UInputMappingContext> DefaultMappingContext;
 
 	virtual void SetupInputComponent() override;
 };

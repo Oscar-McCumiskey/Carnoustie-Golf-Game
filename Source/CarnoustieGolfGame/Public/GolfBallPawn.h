@@ -8,6 +8,7 @@
 #include "GolfBallPawn.generated.h"
 
 class UInputAction;
+class UInputMappingContext;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -25,15 +26,48 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void StartMouseRotating(const FInputActionValue& Value);
+
+	virtual void StopMouseRotating(const FInputActionValue& Value);
+
 	virtual void Look(const FInputActionValue& Value);
+	
+	virtual void StartTouch(const FInputActionValue& Value);
+
+	virtual void TouchLook(const FInputActionValue& Value);
+
+	virtual void TouchShotPower(const FInputActionValue& Value);
 
 public:
 	virtual void DoLook(float Yaw, float Pitch);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void DoShot(float ShotPower);
+
+
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputMappingContext* InputMappingContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* DragClickAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* MouseLookAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* TouchLookAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	float RotateRate = 1.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	bool CanRotate = false;
+
+private:
+	FVector2D PrevTouchVector;
+	FVector2D StartTouchVector;
 
 public:	
 	// Called every frame
