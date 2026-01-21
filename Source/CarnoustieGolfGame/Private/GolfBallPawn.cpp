@@ -5,6 +5,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Components/ArrowComponent.h"
 
 #define D(x) if(GEngine){GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, TEXT(x));}
 
@@ -16,6 +17,15 @@ AGolfBallPawn::AGolfBallPawn()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	StaticMesh = CreateOptionalDefaultSubobject<UStaticMeshComponent>(TEXT("Golf Ball"));
+	RootComponent = StaticMesh;
+	StaticMesh->SetSimulatePhysics(true);
+
+	ArrowComponent = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow"));
+	ArrowComponent->SetupAttachment(RootComponent);
+	ArrowComponent->ArrowLength = 10.f;
+	ArrowComponent->bHiddenInGame = false;
+	ArrowComponent->SetUsingAbsoluteRotation(true);
 }
 
 // Called when the game starts or when spawned
@@ -57,12 +67,25 @@ void AGolfBallPawn::TouchLook(const FInputActionValue& Value)
 	PrevTouchVector = CurrentTouchVector;
 
 	DoLook(LookAxisVector.X, LookAxisVector.Y);
+
+
+	float ShotPower = CurrentTouchVector.Y - StartTouchVector.Y;
+	if (ShotPower > 50)
+	{
+		ArrowComponent->SetArrowLength(FMath::Clamp(ShotPower, 0, 500));
+	}
+	else
+	{
+		ArrowComponent->SetArrowLength(10.f);
+	}
+
 }
 
 void AGolfBallPawn::TouchShotPower(const FInputActionValue& Value)
 {
 	FVector2D ShotVector = Value.Get<FVector2D>();
 	float ShotPower = ShotVector.Y - StartTouchVector.Y;
+	ArrowComponent->SetArrowLength(10.f);
 
 	DoShot(ShotPower);
 }
@@ -85,6 +108,7 @@ void AGolfBallPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	ArrowComponent->SetWorldRotation(GetController()->GetDesiredRotation());
 }
 
 // Called to bind functionality to input

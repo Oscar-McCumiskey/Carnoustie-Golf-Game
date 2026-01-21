@@ -9,6 +9,7 @@
 
 class UInputAction;
 class UInputMappingContext;
+class UArrowComponent;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -23,6 +24,13 @@ public:
 	AGolfBallPawn();
 
 protected:
+	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UStaticMeshComponent> StaticMesh;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UArrowComponent> ArrowComponent;
+
+protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -35,13 +43,13 @@ protected:
 	virtual void StartTouch(const FInputActionValue& Value);
 
 	virtual void TouchLook(const FInputActionValue& Value);
-
+	
 	virtual void TouchShotPower(const FInputActionValue& Value);
 
 public:
 	virtual void DoLook(float Yaw, float Pitch);
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void DoShot(float ShotPower);
 
 
