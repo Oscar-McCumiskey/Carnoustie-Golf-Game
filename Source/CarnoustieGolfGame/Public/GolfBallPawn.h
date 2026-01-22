@@ -4,15 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "Logging/LogMacros.h"
 #include "GolfBallPawn.generated.h"
 
 class UInputAction;
 class UInputMappingContext;
 class UArrowComponent;
 struct FInputActionValue;
-
-DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS()
 class CARNOUSTIEGOLFGAME_API AGolfBallPawn : public APawn
@@ -34,24 +31,37 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	// Called when mouse clicked
 	virtual void StartMouseRotating(const FInputActionValue& Value);
 
+	// Called when mouse unclicked
 	virtual void StopMouseRotating(const FInputActionValue& Value);
 
+	// Mouse camera control logic
 	virtual void Look(const FInputActionValue& Value);
 	
+	// Called when touch registered
 	virtual void StartTouch(const FInputActionValue& Value);
 
-	virtual void TouchLook(const FInputActionValue& Value);
+	// Called when no touch registered
+	virtual void StopTouch(const FInputActionValue& Value);
 	
-	virtual void TouchShotPower(const FInputActionValue& Value);
+	// Touch camera control logic
+	virtual void TouchLook(const FInputActionValue& Value);
 
 public:
+	// Rotate camera
 	virtual void DoLook(float Yaw, float Pitch);
 
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void DoShot(float ShotPower);
+	// Shoot golf ball
+	UFUNCTION(BlueprintCallable)
+	virtual void DoShot(FVector Direction, float ShotPower);
 
+	UFUNCTION(BlueprintCallable)
+	virtual void UpdateShotPowerIndicator(float ShotPower);
+
+	UFUNCTION(BlueprintCallable)
+	virtual void UpdateShotTrajectoryIndicator(FRotator ShotDirection);
 
 protected:
 
@@ -59,19 +69,24 @@ protected:
 	UInputMappingContext* InputMappingContext;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
-	UInputAction* DragClickAction;
+	UInputAction* MouseToggleLookAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* MouseLookAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
-	UInputAction* TouchLookAction;
+	UInputAction* TouchAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	float RotateRate = 1.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	bool CanRotate = false;
+	bool bCanRotate = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GolfShot")
+	float MinimumShotPower= 10.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GolfShot")
+	float MaximumShotPower = 500.f;
 
 private:
 	FVector2D PrevTouchVector;

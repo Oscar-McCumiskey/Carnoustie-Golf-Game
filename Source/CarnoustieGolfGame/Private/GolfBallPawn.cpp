@@ -6,10 +6,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Components/ArrowComponent.h"
+#include "GolfGamePlayerController.h"
 
 #define D(x) if(GEngine){GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, TEXT(x));}
-
-DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 // Sets default values
 AGolfBallPawn::AGolfBallPawn()
@@ -37,19 +36,26 @@ void AGolfBallPawn::BeginPlay()
 
 void AGolfBallPawn::StartMouseRotating(const FInputActionValue& Value)
 {
-	CanRotate = true;
+	bCanRotate = true;
 }
 
 void AGolfBallPawn::StopMouseRotating(const FInputActionValue& Value)
 {
-	CanRotate = false;
+	bCanRotate = false;
 }
 
 void AGolfBallPawn::Look(const FInputActionValue& Value)
 {
+	// REMOVE TESTING ONLY
+	// Ignore mouse input if touch controls active
+	if (Cast<AGolfGamePlayerController>(GetController())->bUseTouchInput)
+	{
+		return;
+	}
+
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
-	if (CanRotate)
+	if (bCanRotate)
 	{
 		DoLook(LookAxisVector.X, LookAxisVector.Y);
 	}
@@ -60,6 +66,10 @@ void AGolfBallPawn::StartTouch(const FInputActionValue& Value)
 	PrevTouchVector = StartTouchVector = Value.Get<FVector2D>();
 }
 
+void AGolfBallPawn::StopTouch(const FInputActionValue& Value)
+{
+}
+
 void AGolfBallPawn::TouchLook(const FInputActionValue& Value)
 {
 	FVector2D CurrentTouchVector = Value.Get<FVector2D>();
@@ -67,27 +77,6 @@ void AGolfBallPawn::TouchLook(const FInputActionValue& Value)
 	PrevTouchVector = CurrentTouchVector;
 
 	DoLook(LookAxisVector.X, LookAxisVector.Y);
-
-
-	float ShotPower = CurrentTouchVector.Y - StartTouchVector.Y;
-	if (ShotPower > 50)
-	{
-		ArrowComponent->SetArrowLength(FMath::Clamp(ShotPower, 0, 500));
-	}
-	else
-	{
-		ArrowComponent->SetArrowLength(10.f);
-	}
-
-}
-
-void AGolfBallPawn::TouchShotPower(const FInputActionValue& Value)
-{
-	FVector2D ShotVector = Value.Get<FVector2D>();
-	float ShotPower = ShotVector.Y - StartTouchVector.Y;
-	ArrowComponent->SetArrowLength(10.f);
-
-	DoShot(ShotPower);
 }
 
 void AGolfBallPawn::DoLook(float Yaw, float Pitch)
@@ -95,20 +84,34 @@ void AGolfBallPawn::DoLook(float Yaw, float Pitch)
 	if (GetController() != nullptr)
 	{
 		AddControllerYawInput(Yaw * RotateRate / 100.f);
+		AddControllerPitchInput(Pitch * RotateRate / 100.f);
 	}
 }
 
-//void AGolfBallPawn::DoShot(FVector2D Direction, float ShotPower)
-//{
-//	
-//}
+void AGolfBallPawn::DoShot(FVector Direction, float ShotPower)
+{
+	if (ShotPower >= MinimumShotPower)
+	{
+		StaticMesh->AddImpulse(Direction * FMath::Clamp(ShotPower, MinimumShotPower, MaximumShotPower));
+	}
+}
+
+void AGolfBallPawn::UpdateShotPowerIndicator(float ShotPower)
+{
+	ArrowComponent->SetArrowLength(FMath::Clamp(ShotPower, MinimumShotPower, MaximumShotPower));
+}
+
+void AGolfBallPawn::UpdateShotTrajectoryIndicator(FRotator ShotDirection)
+{
+	ArrowComponent->SetWorldRotation(ShotDirection);
+}
 
 // Called every frame
 void AGolfBallPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	ArrowComponent->SetWorldRotation(GetController()->GetDesiredRotation());
+	UpdateShotTrajectoryIndicator(GetController()->GetDesiredRotation());
 }
 
 // Called to bind functionality to input
@@ -126,18 +129,17 @@ void AGolfBallPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		EnhancedInputComponent->BindAction(DragClickAction, ETriggerEvent::Triggered, this, &AGolfBallPawn::StartMouseRotating);
-		EnhancedInputComponent->BindAction(DragClickAction, ETriggerEvent::Completed, this, &AGolfBallPawn::StopMouseRotating);
-
-		EnhancedInputComponent->BindAction(TouchLookAction, ETriggerEvent::Started, this, &AGolfBallPawn::StartTouch);
-		EnhancedInputComponent->BindAction(TouchLookAction, ETriggerEvent::Triggered, this, &AGolfBallPawn::TouchLook);
-		EnhancedInputComponent->BindAction(TouchLookAction, ETriggerEvent::Completed, this, &AGolfBallPawn::TouchShotPower);
+		EnhancedInputComponent->BindAction(TouchAction, ETriggerEvent::Started, this, &AGolfBallPawn::StartTouch);
+		EnhancedInputComponent->BindAction(TouchAction, ETriggerEvent::Triggered, this, &AGolfBallPawn::TouchLook);
+		EnhancedInputComponent->BindAction(TouchAction, ETriggerEvent::Completed, this, &AGolfBallPawn::StopTouch);
 
 		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &AGolfBallPawn::Look);
+		EnhancedInputComponent->BindAction(MouseToggleLookAction, ETriggerEvent::Triggered, this, &AGolfBallPawn::StartMouseRotating);
+		EnhancedInputComponent->BindAction(MouseToggleLookAction, ETriggerEvent::Completed, this, &AGolfBallPawn::StopMouseRotating);
 	}
 	else
 	{
-		UE_LOG(LogTemplateCharacter, Error, TEXT("Input Failed"), *GetNameSafe(this));
+		
 	}
 }
 
