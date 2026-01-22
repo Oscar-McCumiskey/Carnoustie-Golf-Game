@@ -72,18 +72,33 @@ void AGolfPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AGolfPawn::MouseLeftPressed()
 {
+	if (bInputsLocked)
+	{
+		return;
+	}
+
 	bIsLeftMouseDown = true;
 	OnMouseLeft();
 }
 
 void AGolfPawn::MouseRightPressed()
 {
+	if (bInputsLocked)
+	{
+		return;
+	}
+
 	bIsRightMouseDown = true;
 	OnMouseRight();
 }
 
 void AGolfPawn::MouseLeftReleased()
 {
+	if (bInputsLocked)
+	{
+		return;
+	}
+
 	bIsLeftMouseDown = false;
 
 	if (SwingPower > MinSwingPower && GolfMesh && Camera)
@@ -110,12 +125,22 @@ void AGolfPawn::MouseLeftReleased()
 
 void AGolfPawn::MouseRightReleased()
 {
+	if (bInputsLocked)
+	{
+		return;
+	}
+
 	bIsRightMouseDown = false;
 	OnMouseRightRelease();
 }
 
 void AGolfPawn::MouseMove(const FInputActionValue& Value)
 {
+	if (bInputsLocked)
+	{
+		return;
+	}
+
 	//Neither left or right mouse is held down
 	if (!bIsLeftMouseDown && !bIsRightMouseDown)
 	{
@@ -142,6 +167,11 @@ void AGolfPawn::MouseMove(const FInputActionValue& Value)
 
 void AGolfPawn::MouseScroll(const FInputActionValue& Value)
 {
+	if (bInputsLocked)
+	{
+		return;
+	}
+
 	float ZoomChange = Value.Get<float>() / ZoomSensitivity;
 	
 	CurZoom += ZoomChange;
