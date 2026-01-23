@@ -8,6 +8,8 @@
 
 class UInputAction;
 class UInputMappingContext;
+class UCameraComponent;
+class USpringArmComponent;
 class UArrowComponent;
 struct FInputActionValue;
 
@@ -20,36 +22,116 @@ public:
 	// Sets default values for this pawn's properties
 	AGolfBallPawn();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bInputsLocked;
+
 protected:
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UStaticMeshComponent> StaticMesh;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	TObjectPtr<UCameraComponent> Camera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	TObjectPtr<USpringArmComponent> SpringArm;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UArrowComponent> ArrowComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	bool bUseTouchControls;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputMappingContext* TouchInputMappingContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* TouchAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	UInputMappingContext* MouseInputMappingContext;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	UInputAction* MouseLeftAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	UInputAction* MouseRightAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	UInputAction* MouseAxisAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	UInputAction* MouseScrollAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input|Camera")
+	FRotator CameraRotationOffset;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input|Camera")
+	float TurnSensitivity;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input|Camera")
+	float ZoomSensitivity;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input|Camera")
+	float MinimumZoom;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input|Camera")
+	float MaximumZoom;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Putting")
+	float MinimumShotPower;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Putting")
+	float MaximumShotPower;
+
+private:
+	FVector2D PrevTouchVector;
+	FVector2D StartTouchVector;
+
+	bool bIsRightMouseDown;
+	bool bIsLeftMouseDown;
+	float CurZoom;
+	float OrgLength;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	// Called when mouse clicked
-	virtual void StartMouseRotating(const FInputActionValue& Value);
+#pragma region Touch Input
 
-	// Called when mouse unclicked
-	virtual void StopMouseRotating(const FInputActionValue& Value);
-
-	// Mouse camera control logic
-	virtual void Look(const FInputActionValue& Value);
-	
 	// Called when touch registered
 	virtual void StartTouch(const FInputActionValue& Value);
 
 	// Called when no touch registered
 	virtual void StopTouch(const FInputActionValue& Value);
-	
+
 	// Touch camera control logic
 	virtual void TouchLook(const FInputActionValue& Value);
 
-public:
+#pragma endregion
+
+#pragma region Mouse Input
+
+	virtual void MouseLeftPressed();
+
+	virtual void MouseRightPressed();
+
+	virtual void MouseLeftReleased();
+
+	virtual void MouseRightReleased();
+
+	virtual void MouseMove(const FInputActionValue& Value);
+
+	virtual void MouseScroll(const FInputActionValue& Value);
+
+#pragma endregion
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
 	// Rotate camera
 	virtual void DoLook(float Yaw, float Pitch);
 
@@ -62,41 +144,5 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual void UpdateShotTrajectoryIndicator(FRotator ShotDirection);
-
-protected:
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
-	UInputMappingContext* InputMappingContext;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
-	UInputAction* MouseToggleLookAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
-	UInputAction* MouseLookAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
-	UInputAction* TouchAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
-	float RotateRate = 1.f;
-
-	bool bCanRotate = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GolfShot")
-	float MinimumShotPower= 10.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GolfShot")
-	float MaximumShotPower = 500.f;
-
-private:
-	FVector2D PrevTouchVector;
-	FVector2D StartTouchVector;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 };
