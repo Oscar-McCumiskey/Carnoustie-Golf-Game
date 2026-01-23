@@ -17,8 +17,6 @@ class CARNOUSTIEGOLFGAME_API AGolfGamePlayerController : public APlayerControlle
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	bool bUseTouchInput = true;
 
 protected:
 

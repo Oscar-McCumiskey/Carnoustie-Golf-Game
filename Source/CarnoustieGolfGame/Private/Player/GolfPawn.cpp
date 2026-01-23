@@ -15,7 +15,6 @@ AGolfPawn::AGolfPawn()
 
 	GolfMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Golfball"));
 	GolfMesh->SetupAttachment(RootComponent);
-
 	GolfMesh->SetSimulatePhysics(true);
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
