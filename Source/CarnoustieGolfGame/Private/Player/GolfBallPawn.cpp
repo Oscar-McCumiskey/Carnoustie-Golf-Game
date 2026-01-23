@@ -54,16 +54,20 @@ void AGolfBallPawn::BeginPlay()
 
 void AGolfBallPawn::StartTouch(const FInputActionValue& Value)
 {
+	if (bInputsLocked) return;
+
 	PrevTouchVector = StartTouchVector = Value.Get<FVector2D>();
 }
 
 void AGolfBallPawn::StopTouch(const FInputActionValue& Value)
 {
-
+	if (bInputsLocked) return;
 }
 
 void AGolfBallPawn::TouchLook(const FInputActionValue& Value)
 {
+	if (bInputsLocked) return;
+
 	FVector2D CurrentTouchVector = Value.Get<FVector2D>();
 	FVector2D LookAxisVector = CurrentTouchVector - PrevTouchVector;
 	PrevTouchVector = CurrentTouchVector;
@@ -73,50 +77,35 @@ void AGolfBallPawn::TouchLook(const FInputActionValue& Value)
 
 void AGolfBallPawn::MouseLeftPressed()
 {
-	if (bInputsLocked)
-	{
-		return;
-	}
+	if (bInputsLocked) return;
 
 	bIsLeftMouseDown = true;
 }
 
 void AGolfBallPawn::MouseRightPressed()
 {
-	if (bInputsLocked)
-	{
-		return;
-	}
+	if (bInputsLocked) return;
 
 	bIsRightMouseDown = true;
 }
 
 void AGolfBallPawn::MouseLeftReleased()
 {
-	if (bInputsLocked)
-	{
-		return;
-	}
+	if (bInputsLocked) return;
 
 	bIsLeftMouseDown = false;
 }
 
 void AGolfBallPawn::MouseRightReleased()
 {
-	if (bInputsLocked)
-	{
-		return;
-	}
+	if (bInputsLocked) return;
 
 	bIsRightMouseDown = false;
 }
 
 void AGolfBallPawn::MouseMove(const FInputActionValue& Value)
 {
-	if (bInputsLocked)
-	{
-		return;
-	}
+	if (bInputsLocked) return;
 
 	//Neither left or right mouse is held down
 	if (!bIsLeftMouseDown && !bIsRightMouseDown)
@@ -140,10 +129,7 @@ void AGolfBallPawn::MouseMove(const FInputActionValue& Value)
 
 void AGolfBallPawn::MouseScroll(const FInputActionValue& Value)
 {
-	if (bInputsLocked)
-	{
-		return;
-	}
+	if (bInputsLocked) return;
 
 	float ZoomChange = Value.Get<float>() / ZoomSensitivity;
 
