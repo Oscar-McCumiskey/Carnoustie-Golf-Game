@@ -6,6 +6,8 @@
 #include "GameFramework/Pawn.h"
 #include "GolfBallPawn.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStroke);
+
 class UInputAction;
 class UInputMappingContext;
 class UCameraComponent;
@@ -145,4 +147,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void UpdateShotTrajectoryIndicator(FRotator ShotDirection);
 
+	UPROPERTY(BlueprintAssignable)
+	FOnStroke OnStroke;
 };

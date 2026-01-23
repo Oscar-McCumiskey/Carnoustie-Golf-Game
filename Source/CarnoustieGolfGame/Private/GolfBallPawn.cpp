@@ -169,6 +169,7 @@ void AGolfBallPawn::DoShot(FVector Direction, float ShotPower)
 	if (ShotPower >= MinimumShotPower)
 	{
 		StaticMesh->AddImpulse(Direction * FMath::Clamp(ShotPower, MinimumShotPower, MaximumShotPower));
+		OnStroke.Broadcast();
 	}
 }
 
