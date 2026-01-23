@@ -160,8 +160,14 @@ void AGolfPawn::MouseMove(const FInputActionValue& Value)
 
 	if (bIsRightMouseDown)
 	{
-		float Rotation = Vector.X * TurnSensitivity;
-		SpringArm->AddRelativeRotation(FRotator(0.0f, Rotation, 0.0f));
+		float Yaw = CurRotation.Yaw + (Vector.X * TurnSensitivity);
+		float Pitch = CurRotation.Pitch + (Vector.Y * TurnSensitivity);
+		Pitch = FMath::Clamp(Pitch, -89.9f, 89.9f);
+
+		CurRotation = FRotator(Pitch, Yaw, 0.0f);
+
+		SpringArm->SetRelativeRotation(CurRotation);
+			
 	}
 }
 

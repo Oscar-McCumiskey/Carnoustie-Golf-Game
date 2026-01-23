@@ -79,6 +79,9 @@ private:
 	UPROPERTY()
 	float OrgLength;
 
+	UPROPERTY()
+	FRotator CurRotation;
+
 public:
 
 	// Called to bind functionality to input
