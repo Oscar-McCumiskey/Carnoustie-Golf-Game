@@ -35,8 +35,8 @@ AGolfBallPawn::AGolfBallPawn()
 
 	ArrowComponent = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow"));
 	ArrowComponent->SetupAttachment(RootComponent);
-	ArrowComponent->ArrowLength = 10.f;
-	ArrowComponent->bHiddenInGame = false;
+	ArrowComponent->ArrowLength = 100.f;
+	ArrowComponent->bHiddenInGame = true;
 	ArrowComponent->SetUsingAbsoluteRotation(true);
 }
 
@@ -49,7 +49,7 @@ void AGolfBallPawn::BeginPlay()
 	OrgLength = SpringArm->TargetArmLength;
 	SpringArm->TargetArmLength = OrgLength * CurZoom;
 
-	SpringArm->SetRelativeRotation(GetController()->GetDesiredRotation() + CameraRotationOffset);
+	//SpringArm->SetRelativeRotation(GetController()->GetDesiredRotation() + CameraRotationOffset);
 }
 
 void AGolfBallPawn::StartTouch(const FInputActionValue& Value)
@@ -145,8 +145,6 @@ void AGolfBallPawn::DoLook(float Yaw, float Pitch)
 	{
 		AddControllerYawInput(Yaw * TurnSensitivity);
 		AddControllerPitchInput(Pitch * TurnSensitivity);
-
-		SpringArm->SetRelativeRotation(GetController()->GetDesiredRotation() + CameraRotationOffset);
 	}
 }
 
@@ -159,22 +157,10 @@ void AGolfBallPawn::DoShot(FVector Direction, float ShotPower)
 	}
 }
 
-void AGolfBallPawn::UpdateShotPowerIndicator(float ShotPower)
-{
-	ArrowComponent->SetArrowLength(FMath::Clamp(ShotPower, MinimumShotPower, MaximumShotPower));
-}
-
-void AGolfBallPawn::UpdateShotTrajectoryIndicator(FRotator ShotDirection)
-{
-	ArrowComponent->SetWorldRotation(ShotDirection);
-}
-
 // Called every frame
 void AGolfBallPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	UpdateShotTrajectoryIndicator(GetController()->GetDesiredRotation());
 }
 
 // Called to bind functionality to input
