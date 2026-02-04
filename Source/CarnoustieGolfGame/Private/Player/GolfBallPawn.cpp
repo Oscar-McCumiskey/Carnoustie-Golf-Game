@@ -150,11 +150,9 @@ void AGolfBallPawn::DoLook(float Yaw, float Pitch)
 
 void AGolfBallPawn::DoShot(FVector Direction, float ShotPower)
 {
-	if (ShotPower >= MinimumShotPower)
-	{
-		StaticMesh->AddImpulse(Direction * FMath::Clamp(ShotPower, MinimumShotPower, MaximumShotPower));
-		OnStroke.Broadcast();
-	}
+	UE_LOG(LogTemp, Display, TEXT("Shot works"));
+	StaticMesh->AddImpulse(Direction * FMath::Clamp(ShotPower, 0, MaximumShotPower));
+	OnStroke.Broadcast();
 }
 
 // Called every frame
