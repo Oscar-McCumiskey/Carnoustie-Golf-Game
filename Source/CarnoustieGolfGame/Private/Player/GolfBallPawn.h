@@ -141,12 +141,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void DoShot(FVector Direction, float ShotPower);
 
-	UFUNCTION(BlueprintCallable)
-	virtual void UpdateShotPowerIndicator(float ShotPower);
-
-	UFUNCTION(BlueprintCallable)
-	virtual void UpdateShotTrajectoryIndicator(FRotator ShotDirection);
-
 	UPROPERTY(BlueprintAssignable)
 	FOnStroke OnStroke;
 };
