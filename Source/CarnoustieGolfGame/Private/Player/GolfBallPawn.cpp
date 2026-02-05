@@ -45,9 +45,9 @@ void AGolfBallPawn::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	CurZoom = (MinimumZoom + MaximumZoom) / 2;
+	CurrentZoom = (MinimumZoom + MaximumZoom) / 2;
 	OrgLength = SpringArm->TargetArmLength;
-	SpringArm->TargetArmLength = OrgLength * CurZoom;
+	SpringArm->TargetArmLength = OrgLength * CurrentZoom;
 
 	//SpringArm->SetRelativeRotation(GetController()->GetDesiredRotation() + CameraRotationOffset);
 }
@@ -133,10 +133,10 @@ void AGolfBallPawn::MouseScroll(const FInputActionValue& Value)
 
 	float ZoomChange = Value.Get<float>() / ZoomSensitivity;
 
-	CurZoom += ZoomChange;
-	CurZoom = FMath::Clamp(CurZoom, MinimumZoom, MaximumZoom);
+	CurrentZoom += ZoomChange;
+	CurrentZoom = FMath::Clamp(CurrentZoom, MinimumZoom, MaximumZoom);
 
-	SpringArm->TargetArmLength = OrgLength * CurZoom;
+	SpringArm->TargetArmLength = OrgLength * CurrentZoom;
 }
 
 void AGolfBallPawn::DoLook(float Yaw, float Pitch)
@@ -150,8 +150,7 @@ void AGolfBallPawn::DoLook(float Yaw, float Pitch)
 
 void AGolfBallPawn::DoShot(FVector Direction, float ShotPower)
 {
-	UE_LOG(LogTemp, Display, TEXT("Shot works"));
-	StaticMesh->AddImpulse(Direction * FMath::Clamp(ShotPower, 0, MaximumShotPower));
+	StaticMesh->AddImpulse(Direction * ShotPower);
 	OnStroke.Broadcast();
 }
 
