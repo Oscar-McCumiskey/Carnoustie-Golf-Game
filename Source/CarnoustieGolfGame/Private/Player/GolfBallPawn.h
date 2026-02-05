@@ -79,19 +79,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input|Camera")
 	float MaximumZoom;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Putting")
-	float MinimumShotPower;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Putting")
-	float MaximumShotPower;
-
 private:
 	FVector2D PrevTouchVector;
 	FVector2D StartTouchVector;
 
 	bool bIsRightMouseDown;
 	bool bIsLeftMouseDown;
-	float CurZoom;
+	float CurrentZoom;
 	float OrgLength;
 
 protected:
