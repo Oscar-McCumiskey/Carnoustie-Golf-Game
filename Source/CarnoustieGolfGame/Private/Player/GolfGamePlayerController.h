@@ -11,6 +11,7 @@ class UInputMappingContext;
 /**
  * 
  */
+
 UCLASS()
 class CARNOUSTIEGOLFGAME_API AGolfGamePlayerController : public APlayerController
 {
@@ -20,6 +21,15 @@ public:
 	AGolfGamePlayerController();
 
 protected:
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void DragScreenSpacePos(FVector2D ScreenSpace, AActor* Object);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void DropPayload(AActor* ActorPayload);
+
+	void DragScreenSpacePos_Implementation(FVector2D ScreenSpace, AActor* Object);
+	void DropPayload_Implementation(AActor* ActorPayload);
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input", meta = (AllowPrivateAccess = "true"))
 	TSoftObjectPtr<UInputMappingContext> DefaultMappingContext;

@@ -19,8 +19,11 @@ void AGolfGamePlayerController::SetupInputComponent()
 	{
 		Subsystem->AddMappingContext(DefaultMappingContext.LoadSynchronous(), 0);
 	}
+
 }
 
+void AGolfGamePlayerController::DragScreenSpacePos_Implementation(FVector2D ScreenSpace, AActor* Object) {}
+void AGolfGamePlayerController::DropPayload_Implementation(AActor* ActorPayload) {}
 void AGolfGamePlayerController::UpdateShotPower(float DeltaTime)
 {
 	// Charge power up or down
