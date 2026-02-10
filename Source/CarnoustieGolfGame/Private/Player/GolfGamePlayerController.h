@@ -36,11 +36,14 @@ protected:
 
 protected:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Default|Putting")
-	float MinimumShotPower;
+	UPROPERTY(BlueprintReadOnly, Category = "Default|Putting")
+	float MinimumShotChargeTime = 0.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Default|Putting")
-	float MaximumShotPower;
+	UPROPERTY(BlueprintReadOnly, Category = "Default|Putting")
+	float MaximumShotChargeTime = 100.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default|Putting")
+	float CurrentShotTime = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default|Putting")
 	float CurrentShotPower;
@@ -57,15 +60,17 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default|Putting")
 	float ShotMultiplier = 1.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default|Putting")
+	TObjectPtr<UCurveFloat> CurrentShotPowerCurve;
+
 	virtual void SetupInputComponent() override;
 
 public:
 
 	UFUNCTION(BlueprintCallable)
-	virtual void UpdateShotPower(float DeltaTime);
+	virtual void UpdateShotPower(float DeltaTime, UCurveFloat* Curve);
 
 private:
 
 	bool bReverseShotPower = false;
-
 };
