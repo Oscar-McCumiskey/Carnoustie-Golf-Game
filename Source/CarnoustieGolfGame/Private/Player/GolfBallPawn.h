@@ -92,6 +92,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	// Shoot golf ball
+	UFUNCTION(BlueprintImplementableEvent)
+	void DoShotBlueprint(FVector Direction, float ShotPower, FVector Location);
+
 #pragma region Touch Input
 
 	// Called when touch registered
@@ -133,7 +137,7 @@ public:
 
 	// Shoot golf ball
 	UFUNCTION(BlueprintCallable)
-	virtual void DoShot(FVector Direction, float ShotPower);
+	virtual void DoShot(FVector Direction, float ShotPower, FVector Location);
 
 	UPROPERTY(BlueprintAssignable)
 	FOnStroke OnStroke;

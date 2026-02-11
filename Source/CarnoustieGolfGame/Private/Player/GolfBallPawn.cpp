@@ -148,9 +148,10 @@ void AGolfBallPawn::DoLook(float Yaw, float Pitch)
 	}
 }
 
-void AGolfBallPawn::DoShot(FVector Direction, float ShotPower)
+void AGolfBallPawn::DoShot(FVector Direction, float ShotPower, FVector Location)
 {
-	StaticMesh->AddImpulse(Direction * ShotPower);
+	StaticMesh->AddImpulseAtLocation(Direction * ShotPower, Location);
+	DoShotBlueprint(Direction,  ShotPower, Location);
 	OnStroke.Broadcast();
 }
 

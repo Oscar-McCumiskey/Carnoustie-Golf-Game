@@ -8,7 +8,7 @@
 
 AGolfGamePlayerController::AGolfGamePlayerController()
 {
-	CurrentShotPower = MinimumShotPower;
+	CurrentShotTime = 0.f;
 }
 
 void AGolfGamePlayerController::SetupInputComponent()
@@ -24,24 +24,26 @@ void AGolfGamePlayerController::SetupInputComponent()
 
 void AGolfGamePlayerController::DragScreenSpacePos_Implementation(FVector2D ScreenSpace, AActor* Object) {}
 void AGolfGamePlayerController::DropPayload_Implementation(AActor* ActorPayload) {}
-void AGolfGamePlayerController::UpdateShotPower(float DeltaTime)
+void AGolfGamePlayerController::UpdateShotPower(float DeltaTime, UCurveFloat* Curve)
 {
 	// Charge power up or down
 	if (!bReverseShotPower)
 	{
-		CurrentShotPower += (DeltaTime * ShotChargeRate);
+		CurrentShotTime += (DeltaTime * ShotChargeRate);
+		CurrentShotPower = Curve->GetFloatValue(CurrentShotTime);
 	}
 	else
 	{
-		CurrentShotPower -= (DeltaTime * ShotChargeRate);
+		CurrentShotTime -= (DeltaTime * ShotChargeRate);
+		CurrentShotPower = Curve->GetFloatValue(CurrentShotTime);
 	}
 
 	// Check to reverse charge
-	if (CurrentShotPower >= MaximumShotPower)
+	if (CurrentShotTime >= MaximumShotChargeTime)
 	{
 		bReverseShotPower = true;
 	}
-	else if (CurrentShotPower <= MinimumShotPower)
+	else if (CurrentShotTime <= MinimumShotChargeTime)
 	{
 		bReverseShotPower = false;
 	}
