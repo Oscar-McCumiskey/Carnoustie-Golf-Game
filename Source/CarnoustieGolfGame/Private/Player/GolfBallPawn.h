@@ -37,9 +37,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	TObjectPtr<USpringArmComponent> SpringArm;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UArrowComponent> ArrowComponent;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	bool bUseTouchControls;
 

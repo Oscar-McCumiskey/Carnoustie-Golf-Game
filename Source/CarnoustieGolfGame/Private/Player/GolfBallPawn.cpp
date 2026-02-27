@@ -32,12 +32,6 @@ AGolfBallPawn::AGolfBallPawn()
 
 	TurnSensitivity = 1.0f;
 	ZoomSensitivity = 25.0f;
-
-	ArrowComponent = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow"));
-	ArrowComponent->SetupAttachment(RootComponent);
-	ArrowComponent->ArrowLength = 100.f;
-	ArrowComponent->bHiddenInGame = true;
-	ArrowComponent->SetUsingAbsoluteRotation(true);
 }
 
 // Called when the game starts or when spawned
