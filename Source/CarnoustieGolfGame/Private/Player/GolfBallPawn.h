@@ -136,6 +136,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void DoShot(FVector Direction, float ShotPower, FVector Location);
 
+	UFUNCTION(BlueprintCallable)
+	void SetPrevTouchVector(FVector2D Pos);
+
 	UPROPERTY(BlueprintAssignable)
 	FOnStroke OnStroke;
+
 };
