@@ -46,11 +46,17 @@ void AGolfBallPawn::BeginPlay()
 	//SpringArm->SetRelativeRotation(GetController()->GetDesiredRotation() + CameraRotationOffset);
 }
 
+void AGolfBallPawn::SetPrevTouchVector(FVector2D Pos) {
+	PrevTouchVector = StartTouchVector = Pos;
+
+}
+
 void AGolfBallPawn::StartTouch(const FInputActionValue& Value)
 {
 	if (bInputsLocked) return;
 
 	PrevTouchVector = StartTouchVector = Value.Get<FVector2D>();
+
 }
 
 void AGolfBallPawn::StopTouch(const FInputActionValue& Value)
@@ -67,6 +73,7 @@ void AGolfBallPawn::TouchLook(const FInputActionValue& Value)
 	PrevTouchVector = CurrentTouchVector;
 
 	DoLook(LookAxisVector.X / 10.f, LookAxisVector.Y / 10.f);
+
 }
 
 void AGolfBallPawn::MouseLeftPressed()
